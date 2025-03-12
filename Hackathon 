@@ -1,1 +1,89 @@
-weather 
+const API_KEY = "YOUR_API_KEY"; // Replace with your OpenWeather API key
+
+async function getWeather() {
+    const city = document.getElementById("cityInput").value;
+    if (!city) {
+        alert("Please enter a city name.");
+        return;
+    }
+
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("City not found");
+        
+        const data = await response.json();
+        displayWeather(data);
+    } catch (error) {
+        document.getElementById("weatherInfo").innerHTML = `<p style="color: red;">${error.message}</p>`;
+    }
+}
+
+function displayWeather(data) {
+    const { name, main, weather } = data;
+    const weatherHTML = `
+        <h2>${name}</h2>
+        <p>Temperature: ${main.temp}°C</p>
+        <p>Humidity: ${main.humidity}%</p>
+        <p>Condition: ${weather[0].description}</p>
+        <img src="https://openweathermap.org/img/wn/${weather[0].icon}.png" alt="Weather Icon">
+    `;
+    document.getElementById("weatherInfo").innerHTML = weatherHTML;
+}<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Weather Dashboard</h1>
+        <input type="text" id="cityInput" placeholder="Enter city name...">
+        <button onclick="getWeather()">Get Weather</button>
+        <div id="weatherInfo"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #f4f4f4;
+}
+
+.container {
+    margin: 50px auto;
+    padding: 20px;
+    width: 350px;
+    background: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+input {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    padding: 10px 20px;
+    background: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+#weatherInfo {
+    margin-top: 20px;
+    font-size: 18px;
+}
